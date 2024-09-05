@@ -10,6 +10,8 @@ A Tampermonkey script to enhance navigation on the Phrack website by adding an o
 - **Dynamic Links**: Automatically generates links for each issue and category.
 - **Customizable Styling**: Easy-to-identify green toggle button for Issues.
 
+![GUI](https://github.com/tomemme/phrackOverlay/blob/main/guiDemo.gif)
+
 ## Installation
 
 To use the script, follow these steps:
