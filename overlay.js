@@ -215,7 +215,7 @@
         let links = '';
 
         // Example for Prophile category
-        if (category === 'Prophile') {
+        if (category === 'Prophiles') {
             if (start === 1 && end === 10) {
                 links += `<li><a href="http://www.phrack.org/issues/4/1.html" style="color: #fff;">Issue 4: Crimson Death</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/5/2.html" style="color: #fff;">Issue 5: Broadway Hacker</a></li>`;
@@ -288,7 +288,7 @@
             }
         }
         // Example for Loopback category
-        if (category === 'Loopback') {
+        if (category === 'Loopbacks') {
             if (start === 31 && end === 40) {
                 links += `<li><a href="http://www.phrack.org/issues/34/2.html" style="color: #fff;">Issue 34</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/35/2.html" style="color: #fff;">Issue 35</a></li>`;
@@ -338,7 +338,7 @@
         }
 
         // Example for Linenoise category
-        if (category === 'Linenoise') {
+        if (category === 'Dem Line Noises') {
             if (start === 41 && end === 50) {
                 links += `<li><a href="http://www.phrack.org/issues/42/2.html" style="color: #fff;">Issue 42</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/43/4.html" style="color: #fff;">Issue 43 part I</a></li>`;
@@ -507,6 +507,36 @@
                 links += `<li><a href="http://www.phrack.org/issues/43/27.html#article" style="color: #fff;">Issue 43: part I</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/44/27.html#article" style="color: #fff;">Issue 44: part I</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/45/28.html#article" style="color: #fff;">Issue 45: part I</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/46/28.html#article" style="color: #fff;">Issue 46: part I</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/47/22.html#article" style="color: #fff;">Issue 47: part I</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/48/18.html#article" style="color: #fff;">Issue 48: part I</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/49/16.html#article" style="color: #fff;">Issue 49: part I</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/50/15.html#article" style="color: #fff;">Issue 50: part I</a></li>`;
+            }
+            else if (start === 51 && end === 60) {
+                links += `<li><a href="http://www.phrack.org/issues/51/16.html#article" style="color: #fff;">Issue 51</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/52/19.html#article" style="color: #fff;">Issue 52</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/53/14.html#article" style="color: #fff;">Issue 53</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/54/11.html#article" style="color: #fff;">Issue 54</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/55/18.html#article" style="color: #fff;">Issue 55</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/57/17.html#article" style="color: #fff;">Issue 57</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/58/13.html#article" style="color: #fff;">Issue 58</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/59/17.html#article" style="color: #fff;">Issue 59</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/60/15.html#article" style="color: #fff;">Issue 60</a></li>`;
+            }
+            else if (start === 61 && end === 70) {
+                links += `<li><a href="http://www.phrack.org/issues/61/15.html#article" style="color: #fff;">Issue 61</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/62/16.html#article" style="color: #fff;">Issue 62</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/63/20.html#article" style="color: #fff;">Issue 63</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/64/3.html#article" style="color: #fff;">Issue 64</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/65/3.html#article" style="color: #fff;">Issue 65</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/66/3.html#article" style="color: #fff;">Issue 66</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/67/3.html#article" style="color: #fff;">Issue 67</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/68/3.html#article" style="color: #fff;">Issue 68</a></li>`;
+                links += `<li><a href="http://www.phrack.org/issues/69/3.html#article" style="color: #fff;">Issue 69</a></li>`;
+            }
+            else if (start === 71 && end === 80) {
+                links += `<li><a href="" style="color: #fff;">Issue 71 coming soon...</a></li>`;
             }
         }
 
