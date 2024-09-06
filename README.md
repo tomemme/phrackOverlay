@@ -7,7 +7,7 @@ A Tampermonkey script to enhance navigation on the Phrack website by adding an o
 - **Overlay Navigation**: Adds a fixed overlay with grouped categories on the Phrack website.
 - **Toggleable Sections**: Toggle buttons for each section (Issues, Prophile, Loopback, Linenoise, and Phrack World News) allow you to expand or collapse the list of links.
 - **Grouped by Issues**: Issues are grouped in sets of 10 to make the list more manageable.
-- **Search all issues for test string**: Search bar searches all the issues for a match.
+- **Search all issues for text string**: Search bar searches all the issues for a match.
 - **Customizable Styling**: Easy-to-identify green toggle button for Issues.
 
 ![GUI](https://github.com/tomemme/phrackOverlay/blob/main/guiDemo.gif)
