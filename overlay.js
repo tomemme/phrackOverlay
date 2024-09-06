@@ -31,6 +31,8 @@
     overlay.innerHTML = `
         <div style="margin-bottom: 15px;">
             <h2 style="text-align: center;">Phrack Navigator</h2>
+            <input type="text" id="globalSearchInput" placeholder="Search issues..." style="width: calc(100% - 10px); padding: 5px; box-sizing: border-box; margin-top: 10px;">
+            <button id="searchButton" style="width: 50%; padding: 5px; margin-top: 5px;">Search</button>
         </div>
 
         <div style="margin-bottom: 15px;">
@@ -72,6 +74,8 @@
         <div id="worldNewsList" style="display:none; margin-bottom: 15px;">
             ${generateGroupedCategoryLinks('Phrack World News', 80, 10)}
         </div>
+
+        <div id="resultsArea" style="margin-top: 15px;"></div> <!-- Dedicated results area -->
     `;
 
     // Append the overlay to the body
@@ -167,6 +171,144 @@
         }
     });
 
+    // Handle search button click event
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const keyword = document.getElementById('globalSearchInput').value;
+        if (keyword) {
+            displayLoadingIndicator(); // Show the loading indicator
+            searchAcrossTextFiles(keyword); // Call the search function with the inputted keyword
+        }
+    });
+
+    // Function to display a loading spinner directly in the overlay
+    function displayLoadingIndicator() {
+        let existingLoader = document.getElementById('loadingMessage');
+
+        // If a loader doesn't already exist, create one
+        if (!existingLoader) {
+            const loadingMessage = document.createElement('div');
+            loadingMessage.id = 'loadingMessage';
+            loadingMessage.innerHTML = `<p>Searching... <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..." style="width: 20px; height: 20px;"/></p>`;
+            loadingMessage.style.color = 'yellow';
+            loadingMessage.style.textAlign = 'center';
+            loadingMessage.style.marginTop = '10px';
+            
+            console.log('Loading spinner added to overlay.');
+            overlay.appendChild(loadingMessage); // Append the loading spinner directly to the overlay
+        } else {
+            console.log('Loading spinner already exists.');
+        }
+    }
+
+    // Function to remove the loading message once the search is complete
+    function removeLoadingIndicator() {
+        const loadingMessage = document.getElementById('loadingMessage');
+        if (loadingMessage) {
+            loadingMessage.remove(); // Remove the loading message from the DOM
+            console.log('Loading spinner removed.');
+        } else {
+            console.log('No loading spinner found to remove.');
+        }
+    }
+
+    // Updated search function to search only valid .txt files
+    async function searchAcrossTextFiles(keyword) {
+        let searchResults = [];
+        keyword = keyword.toLowerCase(); // Normalize the keyword for case-insensitive search
+
+        // Clear previous search results before starting a new search
+        clearSearchResults();
+
+        // Iterate over all issues
+        for (let issueNumber = 1; issueNumber <= 71; issueNumber++) {
+            try {
+                const numFiles = await fetchIssueIndex(issueNumber); // Get the number of .txt files in the issue
+                console.log(`Found ${numFiles} files in issue ${issueNumber}`);
+
+                if (numFiles > 0) {
+                    // Search only within the valid number of .txt files
+                    for (let fileNumber = 1; fileNumber <= numFiles; fileNumber++) {
+                        const textContent = await fetchIssueText(issueNumber, fileNumber);
+                        if (textContent && textContent.toLowerCase().includes(keyword)) {
+                            console.log(`Keyword found in Issue ${issueNumber}, File ${fileNumber}`);
+                            searchResults.push({
+                                issue: issueNumber,
+                                file: fileNumber,
+                                link: `http://www.phrack.org/archives/issues/${issueNumber}/${fileNumber}.txt`
+                            });
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error(`Error processing issue ${issueNumber}:`, error);
+            }
+        }
+
+        // Display search results and remove loading indicator
+        displaySearchResults(searchResults);
+        removeLoadingIndicator(); // Hide the loading message once the search is done
+    }
+
+    // Function to fetch the index page of an issue to determine the number of .txt files
+    async function fetchIssueIndex(issueNumber) {
+        const indexUrl = `http://www.phrack.org/archives/issues/${issueNumber}/`;
+        try {
+            const response = await fetch(indexUrl);
+            if (response.ok) {
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const txtLinks = Array.from(doc.querySelectorAll('a')).filter(link => link.href.endsWith('.txt'));
+                return txtLinks.length; // Return the number of .txt files
+            }
+            throw new Error(`Failed to load index page for issue ${issueNumber}`);
+        } catch (error) {
+            console.error(`Error fetching index for issue ${issueNumber}:`, error);
+            return 0; // Return 0 if the fetch fails
+        }
+    }
+
+    // Function to fetch the content of a single issue's .txt file
+    async function fetchIssueText(issueNumber, fileNumber) {
+        const url = `http://www.phrack.org/archives/issues/${issueNumber}/${fileNumber}.txt`;
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                return await response.text(); // Return the text content of the issue
+            }
+            throw new Error(`Failed to fetch Issue ${issueNumber}, File ${fileNumber}`);
+        } catch (error) {
+            console.error(`Error fetching Issue ${issueNumber}, File ${fileNumber}:`, error);
+            return null; // Return null if the fetch fails
+        }
+    }
+
+    // Function to display search results
+    function displaySearchResults(results) {
+        const resultsArea = document.getElementById('resultsArea');
+        const resultsDiv = document.createElement('div');
+        resultsDiv.innerHTML = `<h3>Search Results: <button id="clearResultsButton" style="float:right;">Clear</button></h3>`;
+
+        if (results.length > 0) {
+            results.forEach(result => {
+                resultsDiv.innerHTML += `<div><a href="${result.link}" target="_blank">Issue ${result.issue}, File ${result.file}</a></div>`;
+            });
+        } else {
+            resultsDiv.innerHTML += '<p>No results found.</p>';
+        }
+
+        resultsArea.appendChild(resultsDiv); // Append results to the dedicated results area
+
+        // Attach event listener to the clear button
+        document.getElementById('clearResultsButton').addEventListener('click', clearSearchResults);
+    }
+
+    // Function to clear search results
+    function clearSearchResults() {
+        const resultsArea = document.getElementById('resultsArea');
+        resultsArea.innerHTML = ''; // Clear only the results area content
+    }
+
     // Helper function to generate grouped issue links
     function generateGroupedIssueLinks(start, end, groupSize) {
         let groupsHtml = '';
@@ -215,7 +357,7 @@
         let links = '';
 
         // Example for Prophile category
-        if (category === 'Prophiles') {
+        if (category === 'Prophile') {
             if (start === 1 && end === 10) {
                 links += `<li><a href="http://www.phrack.org/issues/4/1.html" style="color: #fff;">Issue 4: Crimson Death</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/5/2.html" style="color: #fff;">Issue 5: Broadway Hacker</a></li>`;
@@ -288,7 +430,7 @@
             }
         }
         // Example for Loopback category
-        if (category === 'Loopbacks') {
+        if (category === 'Loopback') {
             if (start === 31 && end === 40) {
                 links += `<li><a href="http://www.phrack.org/issues/34/2.html" style="color: #fff;">Issue 34</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/35/2.html" style="color: #fff;">Issue 35</a></li>`;
@@ -338,7 +480,7 @@
         }
 
         // Example for Linenoise category
-        if (category === 'Dem Line Noises') {
+        if (category === 'Linenoise') {
             if (start === 41 && end === 50) {
                 links += `<li><a href="http://www.phrack.org/issues/42/2.html" style="color: #fff;">Issue 42</a></li>`;
                 links += `<li><a href="http://www.phrack.org/issues/43/4.html" style="color: #fff;">Issue 43 part I</a></li>`;
