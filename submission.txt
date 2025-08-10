@@ -1,0 +1,43 @@
+Phrack Overlay with Issue Search Functionality
+
+Introduction:
+This project provides an enhanced user interface overlay for navigating 
+and searching through Phrack issues. The overlay groups issues by 
+categories with toggle buttons to expand or collapse them, allowing for 
+easier navigation. Additionally, the project introduces a global search 
+functionality that enables users to search for specific terms across all 
+Phrack issue text files (.txt). The search results are displayed within 
+the overlay, making it easier to find relevant content without leaving 
+the page.
+
+Key Features:
+- Overlay-based navigation for Phrack issues, with issues grouped into 
+  sets of 10 for more efficient browsing.
+- Toggleable sections for specific categories, such as Prophile, Loopback, 
+  and World News.
+- Global search functionality that searches across all Phrack issues and 
+  returns links to relevant .txt files where the keyword appears.
+- Visual feedback for users during the search process through a loading 
+  indicator (spinner) and a clear button to reset search results.
+
+Technical Details:
+The project is implemented as a userscript and can be used in browsers 
+with userscript support (such as with Tampermonkey or Greasemonkey). The 
+script dynamically fetches the index of Phrack issues and their associated 
+.txt files, allowing users to search for specific terms across the content 
+while navigating through the Phrack archives. The code also ensures that 
+it avoids fetching non-existent files by first checking the index.
+
+https://github.com/tomemme/phrackOverlay
+
+The loading spinner is appended directly to the overlay for real-time 
+visual feedback during the search process, The search results are 
+displayed in a dedicated results area in the overlay, and users can 
+clear the results at any time with a single click.
+
+Conclusion:
+This submission provides an improved way to navigate and search through 
+Phrack issues, particularly useful for researchers, hackers, and anyone 
+looking to explore the rich content in the archives. The project is open 
+for further development and contributions.
+
