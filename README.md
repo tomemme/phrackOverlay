@@ -17,8 +17,8 @@ A Tampermonkey script to enhance navigation on the Phrack website by adding an o
 To use the script, follow these steps:
 
 1. Install the [Tampermonkey](https://www.tampermonkey.net/) extension for your browser.
-2. Create a new userscript in Tampermonkey and copy the contents of the `phrackOverlay.js` file into the script editor.
-3. Save the script, and it will automatically run when visiting any page under `http://www.phrack.org/issues/*`.
+2. Create a new userscript in Tampermonkey and copy the contents of the `overlay.js` file into the script editor.
+3. Save the script, and it will automatically run when visiting any page under `https://www.phrack.org/issues/*`.
 
 ## Usage
 
