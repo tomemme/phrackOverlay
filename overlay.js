@@ -16,6 +16,31 @@
 (function () {
   "use strict";
 
+  const ISSUE_START = 1;
+  const ISSUE_END = 71;
+  const GROUP_SIZE = 10;
+  const CATEGORY_END = 80;
+  const SECTION_CONFIG = [
+    {
+      id: "Issues",
+      label: "Issues Index",
+      targetId: "issueList",
+      isIssueList: true,
+    },
+    { id: "Prophile", label: "Prophile", targetId: "prophileList" },
+    { id: "Loopback", label: "Loopback", targetId: "loopbackList" },
+    { id: "Linenoise", label: "Linenoise", targetId: "linenoiseList" },
+    {
+      id: "WorldNews",
+      label: "Phrack World News",
+      targetId: "worldNewsList",
+      category: "Phrack World News",
+    },
+  ];
+  const CATEGORY_GROUPS = SECTION_CONFIG.filter(
+    (section) => section.category || !section.isIssueList
+  ).map((section) => section.category || section.label);
+
   //used in search fx
   function gmFetch(url) {
     return new Promise((resolve, reject) => {
@@ -100,11 +125,8 @@
     label.textContent = `${phase} ${done}/${total} (${pct}%)`;
   }
 
-  // Log to the console so we can track progress
-  console.log("POS parallel search");
-
   // Create the overlay div
-  let overlay = document.createElement("div");
+  const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.top = "10px";
   overlay.style.left = "10px";
@@ -130,7 +152,7 @@
             <button id="toggleIssues" style="float: right; background-color: green; color: white;">Toggle</button>
         </div>
         <div id="issueList" style="display:none; margin-bottom: 15px;">
-            ${generateGroupedIssueLinks(1, 71, 10)}
+            ${generateGroupedIssueLinks(ISSUE_START, ISSUE_END, GROUP_SIZE)}
         </div>
 
         <div style="margin-bottom: 15px;">
@@ -138,7 +160,7 @@
             <button id="toggleProphile" style="float: right; background-color: green; color: white;">Toggle</button>
         </div>
         <div id="prophileList" style="display:none; margin-bottom: 15px;">
-            ${generateGroupedCategoryLinks("Prophile", 80, 10)}
+            ${generateGroupedCategoryLinks("Prophile", CATEGORY_END, GROUP_SIZE)}
         </div>
 
         <div style="margin-bottom: 15px;">
@@ -146,7 +168,7 @@
             <button id="toggleLoopback" style="float: right; background-color: green; color: white;">Toggle</button>
         </div>
         <div id="loopbackList" style="display:none; margin-bottom: 15px;">
-            ${generateGroupedCategoryLinks("Loopback", 80, 10)}
+            ${generateGroupedCategoryLinks("Loopback", CATEGORY_END, GROUP_SIZE)}
         </div>
 
         <div style="margin-bottom: 15px;">
@@ -154,7 +176,7 @@
             <button id="toggleLinenoise" style="float: right; background-color: green; color: white;">Toggle</button>
         </div>
         <div id="linenoiseList" style="display:none; margin-bottom: 15px;">
-            ${generateGroupedCategoryLinks("Linenoise", 80, 10)}
+            ${generateGroupedCategoryLinks("Linenoise", CATEGORY_END, GROUP_SIZE)}
         </div>
 
         <div style="margin-bottom: 15px;">
@@ -162,7 +184,7 @@
             <button id="toggleWorldNews" style="float: right; background-color: green; color: white;">Toggle</button>
         </div>
         <div id="worldNewsList" style="display:none; margin-bottom: 15px;">
-            ${generateGroupedCategoryLinks("Phrack World News", 80, 10)}
+            ${generateGroupedCategoryLinks("Phrack World News", CATEGORY_END, GROUP_SIZE)}
         </div>
 
         <div id="resultsArea" style="margin-top: 15px;"></div> <!-- Dedicated results area -->
@@ -171,109 +193,35 @@
   // Append the overlay to the body
   document.body.appendChild(overlay);
 
+  function toggleDisplay(targetId) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    target.style.display = target.style.display === "none" ? "block" : "none";
+  }
+
+  function bindToggle(buttonId, targetId) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+    button.addEventListener("click", function () {
+      toggleDisplay(targetId);
+    });
+  }
+
   // Attach toggle event listeners after the DOM elements are rendered
   window.addEventListener("load", function () {
-    // Toggle functionality for Issues section
-    document
-      .getElementById("toggleIssues")
-      .addEventListener("click", function () {
-        let issueList = document.getElementById("issueList");
-        issueList.style.display =
-          issueList.style.display === "none" ? "block" : "none";
-        console.log("Toggle Issues clicked"); // Debug log
-      });
-
-    // Toggle functionality for Prophile section
-    const prophileButton = document.getElementById("toggleProphile");
-    if (prophileButton) {
-      prophileButton.addEventListener("click", function () {
-        let prophileList = document.getElementById("prophileList");
-        prophileList.style.display =
-          prophileList.style.display === "none" ? "block" : "none";
-        console.log("Toggle Prophile clicked"); // Debug log
-      });
-    } else {
-      console.log("Prophile button not found"); // Debug log
-    }
-
-    // Toggle functionality for Loopback section
-    const loopbackButton = document.getElementById("toggleLoopback");
-    if (loopbackButton) {
-      loopbackButton.addEventListener("click", function () {
-        let loopbackList = document.getElementById("loopbackList");
-        loopbackList.style.display =
-          loopbackList.style.display === "none" ? "block" : "none";
-        console.log("Toggle Loopback clicked"); // Debug log
-      });
-    } else {
-      console.log("Loopback button not found"); // Debug log
-    }
-
-    // Toggle functionality for Linenoise section
-    const linenoiseButton = document.getElementById("toggleLinenoise");
-    if (linenoiseButton) {
-      linenoiseButton.addEventListener("click", function () {
-        let linenoiseList = document.getElementById("linenoiseList");
-        linenoiseList.style.display =
-          linenoiseList.style.display === "none" ? "block" : "none";
-        console.log("Toggle Linenoise clicked"); // Debug log
-      });
-    } else {
-      console.log("Linenoise button not found"); // Debug log
-    }
-
-    // Toggle functionality for Phrack World News section
-    const worldNewsButton = document.getElementById("toggleWorldNews");
-    if (worldNewsButton) {
-      worldNewsButton.addEventListener("click", function () {
-        let worldNewsList = document.getElementById("worldNewsList");
-        worldNewsList.style.display =
-          worldNewsList.style.display === "none" ? "block" : "none";
-        console.log("Toggle Phrack World News clicked"); // Debug log
-      });
-    } else {
-      console.log("Phrack World News button not found"); // Debug log
-    }
+    SECTION_CONFIG.forEach((section) => {
+      bindToggle(`toggle${section.id}`, section.targetId);
+    });
 
     // Add toggle functionality for each group of issues
-    for (let i = 1; i <= 71; i += 10) {
-      const toggleGroupButton = document.getElementById(`toggleGroup${i}`);
-      if (toggleGroupButton) {
-        toggleGroupButton.addEventListener("click", function () {
-          let groupList = document.getElementById(`groupList${i}`);
-          groupList.style.display =
-            groupList.style.display === "none" ? "block" : "none";
-          console.log(`Toggle Issues Group ${i}-${i + 9} clicked`); // Debug log
-        });
-      } else {
-        console.log(`Toggle Issues Group ${i}-${i + 9} button not found`); // Debug log
-      }
+    for (let i = ISSUE_START; i <= ISSUE_END; i += GROUP_SIZE) {
+      bindToggle(`toggleGroup${i}`, `groupList${i}`);
     }
 
     // Add toggle functionality for each group of categories (Prophile, Loopback, etc.)
-    const categories = [
-      "Prophile",
-      "Loopback",
-      "Linenoise",
-      "Phrack World News",
-    ];
-    for (let category of categories) {
-      for (let i = 1; i <= 71; i += 10) {
-        const toggleCategoryButton = document.getElementById(
-          `toggle${category}Group${i}`
-        );
-        if (toggleCategoryButton) {
-          toggleCategoryButton.addEventListener("click", function () {
-            let groupList = document.getElementById(`groupList${category}${i}`);
-            groupList.style.display =
-              groupList.style.display === "none" ? "block" : "none";
-            console.log(`Toggle ${category} Group ${i}-${i + 9} clicked`); // Debug log
-          });
-        } else {
-          console.log(
-            `Toggle ${category} Group ${i}-${i + 9} button not found`
-          ); // Debug log
-        }
+    for (const category of CATEGORY_GROUPS) {
+      for (let i = ISSUE_START; i <= ISSUE_END; i += GROUP_SIZE) {
+        bindToggle(`toggle${category}Group${i}`, `groupList${category}${i}`);
       }
     }
   });
@@ -301,11 +249,7 @@
       loadingMessage.style.color = "yellow";
       loadingMessage.style.textAlign = "center";
       loadingMessage.style.marginTop = "10px";
-
-      console.log("Loading spinner added to overlay.");
       overlay.appendChild(loadingMessage); // Append the loading spinner directly to the overlay
-    } else {
-      console.log("Loading spinner already exists.");
     }
   }
 
@@ -314,9 +258,6 @@
     const loadingMessage = document.getElementById("loadingMessage");
     if (loadingMessage) {
       loadingMessage.remove(); // Remove the loading message from the DOM
-      console.log("Loading spinner removed.");
-    } else {
-      console.log("No loading spinner found to remove.");
     }
   }
 
@@ -337,11 +278,9 @@
     }
 
     // 1) Fetch ALL index counts in parallel (limited concurrency)
-    const issueStart = 1,
-      issueEnd = 71;
     const issues = Array.from(
-      { length: issueEnd - issueStart + 1 },
-      (_, i) => i + issueStart
+      { length: ISSUE_END - ISSUE_START + 1 },
+      (_, i) => i + ISSUE_START
     );
     const idxLimiter = createLimiter(8); // tune 6–12
     let idxDone = 0;
